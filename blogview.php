@@ -1,3 +1,10 @@
+<?php
+session_start();
+require('config/config.php');
+if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+  header('location: login.php');
+};
+?>
 <!doctype html>
 <html lang="en">
 <!--begin::Head-->
@@ -66,7 +73,7 @@
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="../css/adminlte.css" as="style" />
+    <link rel="preload" href="./css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -86,7 +93,7 @@
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="../css/adminlte.css" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
 </head>
 <!--end::Head-->
@@ -94,195 +101,94 @@
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
-    <div class="">
+    <div style="margin-left:0px;">
         <div class="row g-4">
+             <?php
+                 if(isset($_GET['pageno'])){
+                    $pageno =  $_GET['pageno'];
+                 }else{
+                    $pageno = 1;
+                 }
+                 $numofres = 3;
+                 $offset = ($pageno - 1) * $numofres ;
+
+                 $stmt =$pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+                 $stmt->execute();
+                 $rawresult=$stmt->fetchAll();
+                 $totalpages = ceil(count($rawresult)/$numofres);
+
+                  $stmt =$pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numofres ");
+                 $stmt->execute();
+                 $result=$stmt->fetchAll();
+              
+
+             ?>
+             <?php
+                 if($result){
+                      $i =1;
+                      foreach ($result as $value) {
+             ?>        
             <!--begin::Col-->
-            <div class="col-md-4">
+             <div class="col-md-4">
                 <!--begin::Social Widget-->
                 <div class="card mb-0">
                     <!--begin::Card Header-->
                     <div class="card-header">
                         <div class="user-block">
-                           <h4>Blog title</h4>
+                            <h4><?php echo $value['title'];?></h4>
                         </div>
                     </div>
                     <!--end::Card Header-->
                     <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
+                    <div class="card-body" style="text-align:center;">                       
+                       <a href="blogdetail.php?id=<?php echo $value['id']?>"> 
+                        <img class="img-fluid rounded mb-3" src="admin/images/<?php echo $value['image'];?>" style="height:200px !important;">
+                        </a>
                         <p>I took this photo this morning. What do you guys think?</p>
                     </div>
                     <!--end::Social Widget-->
                 </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div  class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-        </div>
-         <div class="row g-4">
-            <!--begin::Col-->
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                        <div class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div  class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-        </div>
-         <div class="row g-4">
-            <!--begin::Col-->
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                        <div class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-            <div class="col-md-4">
-                <!--begin::Social Widget-->
-                <div class="card mb-0">
-                    <!--begin::Card Header-->
-                    <div class="card-header">
-                         <div  class="user-block">
-                           <h4>Blog title</h4>
-                        </div>
-                    </div>
-                    <!--end::Card Header-->
-                    <!--begin::Card Body-->
-                    <div class="card-body">
-                        <img class="img-fluid rounded mb-3" src="../assets/img/photo1.png" alt="" />
-                        <p>I took this photo this morning. What do you guys think?</p>
-                    </div>
-                    <!--end::Social Widget-->
-                </div>
-            </div>
-        </div>
-        <!--end::Col-->
+                </div>        
+             <?php 
+                 $i++ ;
+                 }                         
+                 }
+             ?>
+        </div>        <!--end::Col-->
+        
         <!--begin::Col-->
     </div><br>
+    <div>
+            <nav aria-lable="page navigation example" class="float-end">
+                <ul class="pagination">
+                    <li class="page-item"><a href="?pageno=1" class="page-link">First</a></li>
+                    <li class="page-item <?php if($pageno <= 1){echo 'disabled' ;} ?>">
+                        <a class="page-link" href="<?php if($pageno <= 1){echo "#";}else{ echo '?pageno='.($pageno-1);}?>">Previous</a>
+                    </li>
+                    <li class="page-item"><a href="#" class="page-link"><?php echo $pageno ;?></a></li>
+                    <li class="page-item <?php if($pageno >= $totalpages){echo 'disabled';} ?>">
+                        <a href="<?php if($pageno >= $totalpages){echo "#";}else{ echo '?pageno='.($pageno+1);}?>" class="page-link">Next</a>
+                    </li>
+                    <li class="page-item"><a href="?pageno=<?php echo $totalpages; ?>" class="page-link">End</a></li>
+                </ul>
+            </nav>
+    </div><br><br>
     <!--begin::Footer-->
     <div class="card-footer">
         <footer class="app-footer">
-            <!--begin::To the end-->
-            <div class="float-end d-none d-sm-inline">Anything you want</div>
-            <!--end::To the end-->
-            <!--begin::Copyright-->
-            <strong>
-                Copyright &copy; 2014-2026&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
-            </strong>
-            All rights reserved.
-            <!--end::Copyright-->
-        </footer>
+        <!--begin::To the end-->
+        <div class="float-end d-none d-sm-inline">
+        <a href="logout.php" type="button" class="btn btn-danger"> logout</a>
+        </div>
+        <!--end::To the end-->
+        <!--begin::Copyright-->
+        <strong>
+          Copyright &copy;2026&nbsp;
+          <a href="#" class="text-decoration-none">blog</a>.
+        </strong>
+        All rights reserved.
+        <!--end::Copyright-->
+      </footer>
     </div>
 
 

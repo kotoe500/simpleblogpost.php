@@ -88,7 +88,7 @@
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="./index.html" class="brand-link">
+          <a href="index.php" class="brand-link">
             <!--begin::Brand Image-->
             <img
               src="../assets/img/AdminLTELogo.png"
@@ -97,7 +97,7 @@
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light">Blog Panel</span>
+            <span class="brand-text fw-light">Blog Post</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -161,11 +161,20 @@
             <!-- Docs CTA (bottom of sidebar) -->
             <div class="p-3 mt-3 border-top border-secondary border-opacity-25">
               <a
-                href="./docs/introduction.html"
+                href="../blogview.php"
                 class="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2"
               >
                 <i class="bi bi-book" aria-hidden="true"></i>
-                View documentation
+                View blog
+              </a>
+            </div><br>
+             <div class="p-3 mt-3 border-top border-secondary border-opacity-25">
+              <a
+                href="userlist.php"
+                class="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2"
+              >
+                <i class="people" aria-hidden="true"></i>
+                View user list
               </a>
             </div>
           </nav>

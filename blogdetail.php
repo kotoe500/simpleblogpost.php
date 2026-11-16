@@ -1,3 +1,44 @@
+<?php
+session_start();
+require('config/config.php');
+if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+  header('location: login.php');
+};
+$stmt =$pdo->prepare("SELECT * FROM posts WHERE id=".$_GET['id']);
+$stmt->execute();
+$result = $stmt->fetchAll();
+
+ $blogid = $_GET['id'];
+ 
+$stmtcmt =$pdo->prepare("SELECT * FROM comments  WHERE post_id=$blogid");
+$stmtcmt->execute();
+$cmtresult = $stmtcmt->fetchAll();
+
+$auresult=[];
+if($cmtresult){  
+  foreach ($cmtresult as $key => $value) {
+     $authorid = $cmtresult[$key]['author_id'];
+     $stmtau =$pdo->prepare("SELECT * FROM users  WHERE id=$authorid");
+     $stmtau->execute();
+     $auresult[] = $stmtau->fetchAll();
+  } 
+}
+if(isset($_POST['comment'])){
+  $comment = $_POST['comment']; 
+  $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
+  $result = $stmt->execute(
+    array(
+      ':content'=>$comment,
+      ':author_id'=>$_SESSION['user_id'],
+      ':post_id'=>$blogid
+    )
+  );
+  if($result){
+    header('location: blogdetail.php?id='.$blogid);
+  }
+}
+?>
+
 <!doctype html>
 <html lang="en">
 <!--begin::Head-->
@@ -66,7 +107,7 @@
   <!--begin::Accessibility Features-->
   <!-- Skip links will be dynamically added by accessibility.js -->
   <meta name="supported-color-schemes" content="light dark" />
-  <link rel="preload" href="../css/adminlte.css" as="style" />
+  <link rel="preload" href="css/adminlte.css" as="style" />
   <!--end::Accessibility Features-->
 
   <!--begin::Fonts-->
@@ -86,7 +127,7 @@
   <!--end::Third Party Plugin(Bootstrap Icons)-->
 
   <!--begin::Required Plugin(AdminLTE)-->
-  <link rel="stylesheet" href="../css/adminlte.css" />
+  <link rel="stylesheet" href="./css/adminlte.css" />
   <!--end::Required Plugin(AdminLTE)-->
 </head>
 <!--end::Head-->
@@ -94,8 +135,8 @@
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
   <!--begin::App Wrapper-->
-  <div class="app-wrapper">
-    <div class="row g-4">
+  <div class="" >
+    <div class="row g-4" style="margin-right:0px !important;">
       <!--begin::Col-->
       <div class="">
         <!--begin::Social Widget-->
@@ -103,9 +144,10 @@
           <!--begin::Card Header-->
           <div class="card-header">
             <div class="user-block">
-              <img class="rounded-circle" src="../assets/img/user1-128x128.jpg" alt="" />
+              <!-- <img class="rounded-circle" src="./assets/img/user1-128x128.jpg" alt="" /> -->
+               <img class="img-fluid rounded mb-3" src="admin/images/<?php echo $result[0]['image'];?>">
               <span class="username">
-                <a href="#">Jonathan Burke Jr.</a>
+                <a href="#"><?php echo $result[0]['title'];?></a>
               </span>
               <span class="description">Shared publicly &middot; 7:30 PM today</span>
             </div>
@@ -119,41 +161,47 @@
           <!--end::Card Header-->
           <!--begin::Card Body-->
           <div class="card-body">
-            <img class="img-fluid rounded mb-3 d-block mx-auto" src="../assets/img/photo1.png" alt="" />
-            <p>I took this photo this morning. What do you guys think?</p>
-            <button type="button" class="btn btn-sm btn-outline-secondary me-1">
+             <img class="img-fluid rounded mb-3 d-block mx-auto" src="admin/images/<?php echo $result[0]['image'];?>" style ="width:50%; height:500px;"/>
+             <p><?php echo $result[0]['content'];?></p>
+             <button type="button" class="btn btn-sm btn-outline-secondary me-1">
               <i class="bi bi-share me-1" aria-hidden="true"></i> Share
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">
+             </button>
+             <button type="button" class="btn btn-sm btn-outline-secondary">
               <i class="bi bi-hand-thumbs-up me-1" aria-hidden="true"></i> Like
-            </button>
-            <span class="float-end text-secondary">45 likes &middot; 2 comments</span>
+             </button>
+             <span class="float-end text-secondary">45 likes &middot; 2 comments</span>
           </div>
+            <hr>
+          <h3 style="margin-left:30px;">Comment</h3>
+          <hr>
           <!--end::Card Body-->
           <!--begin::Card Footer-->
+
           <div class="card-footer">
-            <div class="user-block user-block-sm mb-3">
-              <img class="rounded-circle" src="../assets/img/user4-128x128.jpg" alt="" />
-              <span class="username"><a href="#">Maria Gonzales</a></span>
-              <span class="description">Posted 5 minutes ago</span>
-              <span class="comment">
-                It is a long established fact that a reader will be distracted by the
-                readable content of a page.
-              </span>
+            <?php if($cmtresult){
+              ?>
+              <div class="user-block user-block-sm mb-3">
+              <img class="rounded-circle" src="./assets/img/user4-128x128.jpg" alt="" />
+              <?php foreach ($cmtresult as $key => $value){ ?>
+                  <span class="username"><a href="#"><?php echo $auresult[$key][0]['name'];?></a></span>
+                  <span class="description"><?php echo $cmtresult[$key]['created_at'];?></span>
+                  <span class="comment">
+                  <?php echo $cmtresult[$key]['content'];?>
+                  </span>
+
+                <?php                
+              }
+              ?>
             </div>
-            <div class="user-block user-block-sm">
-              <img class="rounded-circle" src="../assets/img/user5-128x128.jpg" alt="" />
-              <span class="username"><a href="#">Nora Havisham</a></span>
-              <span class="description">Posted 27 minutes ago</span>
-              <span class="comment">
-                The point of using Lorem Ipsum is that it has a more-or-less normal
-                distribution of letters.
-              </span>
-            </div>
+              <?php
+            }
+            ?>
+          
             <!--begin::Comment Form-->
-            <form class="mt-3">
+            
+            <form class="mt-3" action="" method="POST">
               <label for="social-comment" class="visually-hidden"> Write a comment </label>
-              <input type="text" id="social-comment" class="form-control form-control-sm"
+              <input type="text"  name="comment" class="form-control form-control-sm"
                 placeholder="Type a comment" />
             </form>
             <!--end::Comment Form-->
@@ -164,21 +212,25 @@
       </div>
       <!--end::Col-->
       <!--begin::Col-->
-      
+     </div>
+  </div>
+
           <!--begin::Footer-->
           <div>
-            <footer class="app-footer">
-              <!--begin::To the end-->
-              <div class="float-end d-none d-sm-inline">Anything you want</div>
-              <!--end::To the end-->
-              <!--begin::Copyright-->
-              <strong>
-                Copyright &copy; 2014-2026&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
-              </strong>
-              All rights reserved.
-              <!--end::Copyright-->
-            </footer>
+         <footer class="app-footer">
+        <!--begin::To the end-->
+        <div class="float-end d-none d-sm-inline">
+        <a href="logout.php" type="button" class="btn btn-danger"> logout</a>
+        </div>
+        <!--end::To the end-->
+        <!--begin::Copyright-->
+        <strong>
+          Copyright &copy;2026&nbsp;
+          <a href="#" class="text-decoration-none">blog</a>.
+        </strong>
+        All rights reserved.
+        <!--end::Copyright-->
+      </footer>
           </div>
 
 

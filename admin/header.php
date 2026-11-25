@@ -56,10 +56,18 @@
               </a>
             </li>            
           <!--end::Start Navbar Links-->
+
+          <?php
+          // $link = $_SERVER('PHP_SELF');
+          // $link_array = explode('/',$link);
+          // $page =end($link_array);
+          //နောက်တနည်းအတို‌ေရးနည်း
+          $page = basename($_SERVER['PHP_SELF']);
+          ?>
           <!--begin::Navbar Search-->
-          <form method="POST" action="index.php"
+          <form method="POST" action="<?php echo $page == 'index.php' ? 'index.php' : 'userlist.php';?>"
             class="navbar-search d-none d-md-block ms-3"
-            role="search"
+
           >
             <label for="navbar-search-input" class="visually-hidden">Search</label>
             <div class="navbar-search-field">

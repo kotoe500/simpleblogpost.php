@@ -12,11 +12,12 @@ if($_POST){
    if($user){
      echo  "<script>alert('your email is duplicated)</script>";
    }else{
-     $stmt = $pdo->prepare("INSERT INTO users(name,email,password) VALUES(:name,:email,:password) ");
+     $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role) ");
      $result = $stmt->execute([
       ':name'=> $name,
       ':email'=> $email,
-      ':password' => $password     
+      ':password' => $password ,
+      ':role' => 0     
       ]);
    if($result){
     echo "<script>alert('your register is successful');window.location.href='login.php';</script>";

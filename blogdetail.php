@@ -219,6 +219,9 @@ if(isset($_POST['comment'])){
           <div>
          <footer class="app-footer">
         <!--begin::To the end-->
+              <div class="float-end d-none d-sm-inline">            
+        <a href="blogview.php" type="button" class="btn btn-danger ms-2"> Back</a>
+        </div>
         <div class="float-end d-none d-sm-inline">
         <a href="logout.php" type="button" class="btn btn-danger"> logout</a>
         </div>
@@ -226,7 +229,7 @@ if(isset($_POST['comment'])){
         <!--begin::Copyright-->
         <strong>
           Copyright &copy;2026&nbsp;
-          <a href="#" class="text-decoration-none">blog</a>.
+          <a href="#" class="text-decoration-none">blog</a>
         </strong>
         All rights reserved.
         <!--end::Copyright-->

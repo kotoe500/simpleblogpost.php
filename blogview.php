@@ -176,8 +176,11 @@ if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     <!--begin::Footer-->
     <div class="card-footer">
         <footer class="app-footer">
+             <div class="float-end d-none d-sm-inline">            
+        <a href="admin/index.php" type="button" class="btn btn-danger ms-2"> Back</a>
+        </div>
         <!--begin::To the end-->
-        <div class="float-end d-none d-sm-inline">
+        <div class="float-end d-none d-sm-inline">            
         <a href="logout.php" type="button" class="btn btn-danger"> logout</a>
         </div>
         <!--end::To the end-->

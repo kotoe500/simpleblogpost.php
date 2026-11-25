@@ -4,6 +4,17 @@ require('../config/config.php');
 if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
   header('location: login.php');
 };
+if($_SESSION['role'] != 1){
+  header ('location: login.php');
+};
+if(isset($_POST['search'])){
+  setcookie('search',$_POST['search'], time() + (86400 * 30),"/"); // 86400 = 1 day
+}else{
+  if(empty($_GET['pageno'])){
+    unset($_COOKIE['search']);
+    setcookie('search',null, -1 ,'/');
+  }
+}
 
 ?>
 <?php
@@ -35,10 +46,10 @@ include 'header.php';
         }else{
           $pageno = 1;
         }
-        $numofres = 4;
+        $numofres = 2;
         $offset = ($pageno -1) * $numofres;
 
-        if(empty($_POST['search'])){
+        if(empty($_POST['search']) && empty($_COOKIE['search'])){
           $stmt =$pdo->prepare("SELECT * FROM users ORDER BY id DESC");
         $stmt->execute();
         $rawresult=$stmt->fetchAll();
@@ -48,8 +59,8 @@ include 'header.php';
         $stmt->execute();
         $result=$stmt->fetchAll(); 
         }else{
-          $searchKey = $_POST['search'];
-          $stmt =$pdo->prepare("SELECT * FROM users WHERE name LIKE  '%$searchKey%' ORDER BY id DESC");
+        $searchKey = isset($_POST['search']) ? $_POST['search']: $_COOKIE['search'];
+        $stmt =$pdo->prepare("SELECT * FROM users WHERE name LIKE  '%$searchKey%' ORDER BY id DESC");
         $stmt->execute();
         $rawresult=$stmt->fetchAll();
         $total_pages = ceil(COUNT($rawresult)/$numofres);
@@ -57,8 +68,7 @@ include 'header.php';
         $stmt =$pdo->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofres ;");
         $stmt->execute();
         $result=$stmt->fetchAll(); 
-        }      
-        
+        }         
         ?>
         <!--begin::App Content-->
         <div class="app-content">
@@ -73,7 +83,7 @@ include 'header.php';
                     <h3 class="card-title">Post Table</h3>
                   </div>
                   <div>
-                    <a href="add.php" type="button" class="btn btn-success btn-sm ms-3 mt-3">create new blog post</a>
+                    <a href="user-add.php" type="button" class="btn btn-success btn-sm ms-3 mt-3">create new user</a>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body">
@@ -99,10 +109,10 @@ include 'header.php';
                           <td>          
                            <div class="btn-group"> 
                               <div class="container">
-                                <a href="edit.php?id=<?php echo $value['id']?>" type="button" class="btn btn-warning btn-sm">edit</a>
+                                <a href="user-edit.php?id=<?php echo $value['id']?>" type="button" class="btn btn-warning btn-sm">edit</a>
                               </div>
                               <div class="container">
-                                <a href="delete.php?id=<?php echo $value['id']?>" type="button" class="btn btn-danger btn-sm" onclick="return confirm('Are your sure delete this file')">delete</a>
+                                <a href="user-delete.php?id=<?php echo $value['id']?>" type="button" class="btn btn-danger btn-sm" onclick="return confirm('Are your sure delete this file')">delete</a>
                               </div>                               
                             </div>                         
                           </td>                          
